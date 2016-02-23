@@ -28,7 +28,7 @@
             //emit a movementUpdate message to the server and send our request data
             socket.emit('movementUpdate', message);
         }
-        
+       
         //redraw our square to the screen
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);

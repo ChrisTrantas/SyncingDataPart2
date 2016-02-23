@@ -40,7 +40,6 @@ function handler (req, res) {
   });
 }
 
-
 //When new connections occur on our socket.io server (we receive the new connection as a socket in the parameters)
 io.on('connection', function (socket) {
   
