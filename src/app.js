@@ -15,6 +15,9 @@ var PORT = process.env.PORT || process.env.NODE_PORT || 3000;
 //tell your server to listen on the port
 app.listen(PORT);
 
+// draw array
+var draws = {};
+
 //Overall object to show maintained by the server
 var square = {
     lastUpdate: new Date().getTime(),
@@ -44,26 +47,22 @@ function handler (req, res) {
 io.on('connection', function (socket) {
   
     socket.join('room1');
-
-    socket.on('movementUpdate', function(data) {
-    //update our square's x and y positions from the data sent in from the client.
-    //We are assuming that the data sent in will contain an xUpdate and yUpdate.
-	square.x += data.xUpdate
-	square.y += data.yUpdate;
 	
-    //update our square's last updated time
-    square.lastUpdate = new Date().getTime();
-	
-    //grab ALL sockets in the room and emit the newly updated square to them. 
-    //We are sending an "updatedMovement" message back to the user of our updated square
-    //Remember io.sockets.in sends a message to EVERYONE in the room vs broadcast which sends to everyone EXCEPT this user. 
-    io.sockets.in('room1').emit('updatedMovement', square); 
+	// Uses initial data to draw client square
+    socket.on('initial', function(data) {
+		draws[data.time] = data.data;
+		var message =
+		{
+			message: "",
+			data: draws[data.time]
+		}
+	 
+    io.sockets.in('room1').emit('update', message); 
   });
   
-  //When the user disconnects, remove them from the room (since they are no longer here)
-  //The socket is maintained for a bit in case they reconnect, but we do want to remove them from the room
-  //Since they are currently disconnected.
+
   socket.on('disconnect', function(data) {
+	  delete draws[data.time];
     socket.leave('room1');
   });
 });
