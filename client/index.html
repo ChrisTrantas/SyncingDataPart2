@@ -9,7 +9,7 @@
         var ctx;
         //our websocket connection
         var socket; 
-
+		var squareList = [];
         // Our square object to draw to the screen
         // This holds all of the parameters of our square and will
         // be synced from the server. When server updates come in
@@ -47,7 +47,10 @@
         function redraw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             //draw our updated square
-            ctx.fillRect(square.x, square.y, square.width, square.height);
+			for(var i = 0; i < squareList.length;i++)
+			{
+				ctx.fillRect(squareList[i].x, squareList[i].y, squareList[i].width, squareList[i].height);
+			}
         }
         
         //when a message is received from the server
@@ -60,7 +63,8 @@
                square's parameters with the message we received.
             **/
             square = data;
-            
+            squareList.push(square);
+			console.log(squareList);
             //redraw new data to the screen
             redraw();
         }

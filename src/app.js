@@ -21,6 +21,7 @@ app.listen(PORT);
    from this one. **/
 //Our square object will have a last updated time (so the client know to use the latest if they receive multiple)
 //Our square will also have an x/y position and height/width
+var squareList = [];
 var square = {
     lastUpdate: new Date().getTime(),
     x: 0,
@@ -68,11 +69,15 @@ io.on('connection', function (socket) {
   socket.on('movementUpdate', function(data) {
     //update our square's x and y positions from the data sent in from the client.
     //We are assuming that the data sent in will contain an xUpdate and yUpdate.
-    square.x += data.xUpdate;
-    square.y += data.yUpdate;
+	square.x += data.xUpdate
+	square.y += data.yUpdate;
+    if(square.x < -1) {square.x += data.xUpdate;}
+	if(square.x > 100) {square.x -= data.xUpdate;}
+    if(square.y < -1) {square.y += data.yUpdate;}
+	if(square.y > 100) {square.y -= data.yUpdate;}
     //update our square's last updated time
     square.lastUpdate = new Date().getTime();
-    
+    squareList.push(square);
     //grab ALL sockets in the room and emit the newly updated square to them. 
     //We are sending an "updatedMovement" message back to the user of our updated square
     //Remember io.sockets.in sends a message to EVERYONE in the room vs broadcast which sends to everyone EXCEPT this user. 
