@@ -29,14 +29,14 @@
 			for(var i = 0; i < keys.length;i++)
 			{
 				var drawCall = draws[keys[i]];
-				console.log(drawCall);
+				console.log(draws);
 				ctx.fillRect(drawCall.x, drawCall.y, drawCall.width, drawCall.height);
 			}
         }
 
         function update(data) {
 
-            square = data;
+            draws = data.data;
             //redraw new data to the screen
             draw();
         }
@@ -44,9 +44,9 @@
 		{
 			var time = new Date().getTime();
 			draws[time] = {x: Math.random() * 300, y: Math.random() * 300, width: 100, height: 100};
-			time = new Date().getTime();
+	
 			var coords = {x:0,y:0,width:100, height:100};
-			socket.emit('initial',{time: time, coords: coords});
+			socket.emit('initial',{time: time, coords: draws[time]});
 		}
 		
 		function handleMessage(data)
@@ -64,12 +64,11 @@
             //When the socket connects successfully
             socket.on('connect', function () {
 			 setCalls();		
-
             });      
 
             socket.on('update', function(data)
 			{
-				draws[data.time] = data;
+				draws = data.data;
 				draw();
 			});
         }

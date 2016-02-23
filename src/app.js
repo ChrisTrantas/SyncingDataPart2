@@ -50,11 +50,11 @@ io.on('connection', function (socket) {
 	
 	// Uses initial data to draw client square
     socket.on('initial', function(data) {
-		draws[data.time] = data.data;
+		draws[data.time] = data.coords;
 		var message =
 		{
 			message: "",
-			data: draws[data.time]
+			data: draws
 		}
 	 
     io.sockets.in('room1').emit('update', message); 
